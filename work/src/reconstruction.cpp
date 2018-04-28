@@ -19,7 +19,7 @@ Mat reconstruct(const Mat&nnf, const Mat&sourceBorder) {
 
 	for (int row = 0; row < nnf.rows; row++) {
 		for (int col = 0; col < nnf.cols; col++) {
-			Vec2i offset = nnf.at<Vec2i>(row, col);
+			/*Vec2i offset = nnf.at<Vec2i>(row, col);
 			Rect referenceLoc = Rect(col + offset[1], row + offset[0], SIZE, SIZE);
 			Rect currentLoc = Rect(col, row, SIZE, SIZE);
 			patch = sourceBorder(referenceLoc);
@@ -31,7 +31,19 @@ Mat reconstruct(const Mat&nnf, const Mat&sourceBorder) {
 			patchCounter.copyTo(tempPatchTrav(currentLoc));
 
 			add(reconstruction, tempReconstr, reconstruction);
-			add(patchTraversals, tempPatchTrav, patchTraversals);
+			add(patchTraversals, tempPatchTrav, patchTraversals);*/
+			Vec2i offset = nnf.at<Vec2i>(row, col);
+			Rect referenceLoc = Rect(col + offset[1], row + offset[0], SIZE, SIZE);
+			patch = sourceBorder(referenceLoc);
+			patch.convertTo(patch, CV_32SC3);
+
+			for (int rr = 0; rr < SIZE; rr++) {
+				for (int cc = 0; cc < SIZE; cc++) {
+					reconstruction.at<Vec3i>(row + rr, col + cc) +=
+						patch.at<Vec3i>(rr, cc);
+					patchTraversals.at<Vec3i>(row + rr, col + cc) += Vec3i(1,1,1);
+				}
+			}
 		}
 	}
 	reconstruction /= patchTraversals;

@@ -54,14 +54,27 @@ int main( int argc, char** argv ) {
 		targetGaus.at(PYRAMID_SIZE - 1).cols, CV_32SC2);
 	
 	Mat cost(nnf.rows, nnf.cols, CV_32F);
-	getNNF(nnf, cost, sourceGaus.at(PYRAMID_SIZE - 1), targetGaus.at(PYRAMID_SIZE - 1),
+	/*getNNF(nnf, cost, sourceGaus.at(PYRAMID_SIZE - 1), targetGaus.at(PYRAMID_SIZE - 1),
+		sourceGausBorder.at(PYRAMID_SIZE - 1), targetGausBorder.at(PYRAMID_SIZE - 1));*/
+
+	initialize(sourceGaus.at(PYRAMID_SIZE - 1), targetGaus.at(PYRAMID_SIZE - 1), sourceGausBorder.at(PYRAMID_SIZE - 1),
+		targetGausBorder.at(PYRAMID_SIZE - 1), nnf, cost);
+	
+	getNNF(nnf, cost, sourceGaus.at(PYRAMID_SIZE-1), targetGaus.at(PYRAMID_SIZE - 1),
 		sourceGausBorder.at(PYRAMID_SIZE - 1), targetGausBorder.at(PYRAMID_SIZE - 1));
 	
-	int stop = 2;
+	int stop = 0;
 
 	for (int i = PYRAMID_SIZE - 1; i >= stop; i--) {
-		iterateNNF(nnf, cost, sourceGaus.at(i), targetGaus.at(i),
-			sourceGausBorder.at(i), targetGausBorder.at(i));
+
+		for (int j = 0; j < 5; j++) {
+			Mat targetBorder = reconstruct(nnf, sourceGausBorder.at(i));
+			Mat target = targetBorder(Rect(CENTER, nnf.size()));
+			/*getNNF(nnf, cost, sourceGaus.at(i), targetGaus.at(i),
+				sourceGausBorder.at(i), targetGausBorder.at(i));*/
+			getNNF(nnf, cost, sourceGaus.at(i), target,
+				sourceGausBorder.at(i), targetBorder);
+		}
 		if (i != stop) {
 			nnf = upSample(nnf, Size(targetGaus.at(i - 1).cols, targetGaus.at(i - 1).rows));
 			getCost(cost, nnf, sourceGausBorder.at(i - 1), targetGausBorder.at(i - 1));
@@ -74,11 +87,11 @@ int main( int argc, char** argv ) {
 	*****************************/
 
 
-	namedWindow("smallest", WINDOW_AUTOSIZE);
-	imshow("smallest", targetGaus.at(4));
-	namedWindow("2nd", WINDOW_AUTOSIZE);
-	imshow("2nd", targetGaus.at(3));
-	namedWindow("3rd", WINDOW_AUTOSIZE);
+	//namedWindow("smallest", WINDOW_AUTOSIZE);
+	//imshow("smallest", targetGaus.at(4));
+	//namedWindow("2nd", WINDOW_AUTOSIZE);
+	//imshow("2nd", targetGaus.at(3));
+	//namedWindow("3rd", WINDOW_AUTOSIZE);
 	imshow("3rd", targetGaus.at(2));
 	namedWindow("4th", WINDOW_AUTOSIZE);
 	imshow("4th", targetGaus.at(1));

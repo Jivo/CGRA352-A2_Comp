@@ -8,11 +8,9 @@ GET NNF
 void getNNF(Mat&nnf, Mat &cost, const Mat&source, const Mat&target,
 	const Mat&sourceBorder, const Mat&targetBorder) {
 	Mat newTarget;
-	int left = CENTER.x, right = SIZE - 1 - CENTER.x,
-		top = CENTER.y, bottom = SIZE - 1 - CENTER.y;
 
-	initialize(source, target, sourceBorder,
-		targetBorder, nnf, cost);
+	//initialize(source, target, sourceBorder,
+	//	targetBorder, nnf, cost);
 
 	newTarget = targetBorder;
 	for (int i = 0; i < MAX_ITERATIONS; i++) {
@@ -26,8 +24,6 @@ ITERATE NNF
 void iterateNNF(Mat&nnf, Mat &cost, const Mat&source, const Mat&target,
 	const Mat&sourceBorder, const Mat&targetBorder) {
 	Mat newTarget;
-	int left = CENTER.x, right = SIZE - 1 - CENTER.x,
-		top = CENTER.y, bottom = SIZE - 1 - CENTER.y;
 
 	for (int i = 0; i < MAX_ITERATIONS; i++) {
 		newTarget = reconstruct(nnf, sourceBorder);
